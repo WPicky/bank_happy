@@ -1,0 +1,355 @@
+---
+swagger: "2.0"
+info:
+  description: "Interface specifications of a simplified banking application."
+  version: "1.0.0"
+  title: "Swagger BankAPI"
+  contact:
+    email: "jade.llanes@ynov.com"
+host: "localhost:3000"
+basePath: "/v2"
+tags:
+- name: "user"
+  description: "User who have a bank account"
+- name: "transfer"
+  description: "Transfer on the bank account"
+- name: "transaction"
+  description: "Deposit or withdrawal on the bank account"
+schemes:
+- "https"
+- "http"
+paths:
+  /user:
+    post:
+      tags:
+      - "user"
+      summary: "Create user"
+      description: "This can only be done by the logged in user."
+      operationId: "createUser"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Created user object"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        default:
+          description: "successful operation"
+      x-swagger-router-controller: "User"
+  /user/login:
+    get:
+      tags:
+      - "user"
+      summary: "Logs user into the system"
+      description: ""
+      operationId: "loginUser"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "query"
+        description: "The user id for login"
+        required: true
+        type: "string"
+      - name: "pin"
+        in: "query"
+        description: "The pin for login in clear text"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          headers:
+            X-Rate-Limit:
+              type: "integer"
+              format: "int32"
+              description: "calls per hour allowed by the user"
+            X-Expires-After:
+              type: "string"
+              format: "date-time"
+              description: "date in UTC when token expires"
+          schema:
+            type: "string"
+        400:
+          description: "Invalid id/pin supplied"
+      x-swagger-router-controller: "User"
+  /user/logout:
+    get:
+      tags:
+      - "user"
+      summary: "Logs out current logged in user session"
+      description: ""
+      operationId: "logoutUser"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+      x-swagger-router-controller: "User"
+  /user/{id}:
+    get:
+      tags:
+      - "user"
+      summary: "Get user by id"
+      description: ""
+      operationId: "getUserById"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: ""
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: "Invalid id supplied"
+        404:
+          description: "User not found"
+      x-swagger-router-controller: "User"
+    put:
+      tags:
+      - "user"
+      summary: "Updated user"
+      description: "This can only be done by the logged in user."
+      operationId: "updateUser"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "name that need to be updated"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Updated user object"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        400:
+          description: "Invalid user supplied"
+        404:
+          description: "User not found"
+      x-swagger-router-controller: "User"
+    delete:
+      tags:
+      - "user"
+      summary: "Delete user"
+      description: "This can only be done by the logged in user."
+      operationId: "deleteUser"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The name that needs to be deleted"
+        required: true
+        type: "string"
+      responses:
+        400:
+          description: "Invalid user supplied"
+        404:
+          description: "User not found"
+      x-swagger-router-controller: "User"
+  /transaction:
+    post:
+      tags:
+      - "transaction"
+      summary: "Creation of the object transaction"
+      description: "A transaction is a deposit or withdrawal of money"
+      operationId: "createTransaction"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "parameters of the object transaction"
+        required: true
+        schema:
+          $ref: "#/definitions/Transaction"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Transaction"
+        400:
+          description: "Invalid Transaction"
+      x-swagger-router-controller: "Transaction"
+  /transaction/id:
+    get:
+      tags:
+      - "transaction"
+      summary: "Returns transaction by the id of the account/user"
+      description: "Returns the detail of the transaction"
+      operationId: "getTransaction"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            additionalProperties:
+              type: "integer"
+              format: "int32"
+      x-swagger-router-controller: "Transaction"
+  /transfer:
+    post:
+      tags:
+      - "transfer"
+      summary: "Creation of the object transfer"
+      description: "A tranfer is a money move between two acccount"
+      operationId: "createTransfer"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "parameter of a transfer"
+        required: true
+        schema:
+          $ref: "#/definitions/Transfer"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Transfer"
+        400:
+          description: "Invalid Transfer"
+      x-swagger-router-controller: "Transfer"
+  /transfer/id:
+    get:
+      tags:
+      - "transfer"
+      summary: "Returns transfer"
+      description: "Returns the detail of the transfer"
+      operationId: "getTransfer"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            additionalProperties:
+              type: "integer"
+              format: "int32"
+      x-swagger-router-controller: "Transfer"
+securityDefinitions:
+  JWT:
+    description: ""
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+  user_auth:
+    type: "oauth2"
+    authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
+    flow: "implicit"
+    scopes:
+      write:users: "modify users"
+      read:users: "read your users"
+  api_key:
+    type: "apiKey"
+    name: "api_key"
+    in: "header"
+definitions:
+  User:
+    type: "object"
+    required:
+    - "firstName"
+    - "lastName"
+    - "pin"
+    properties:
+      id:
+        type: "string"
+      firstName:
+        type: "string"
+      lastName:
+        type: "string"
+      adress:
+        type: "string"
+      birthdate:
+        type: "string"
+        format: "date"
+      pin:
+        type: "number"
+      solde:
+        type: "number"
+        format: "float"
+    xml:
+      name: "User"
+    example:
+      firstName: "firstName"
+      lastName: "lastName"
+      birthdate: "2000-01-23"
+      pin: 0.80082819046101150206595775671303272247314453125
+      solde: 6.0274563
+      adress: "adress"
+      id: "id"
+  Transaction:
+    type: "object"
+    properties:
+      userId:
+        type: "string"
+      date:
+        type: "string"
+        format: "date-time"
+      montant:
+        type: "number"
+        format: "float"
+    xml:
+      name: "Depot"
+    example:
+      date: "2000-01-23T04:56:07.000+00:00"
+      montant: 0.8008282
+      userId: "userId"
+  Transfer:
+    type: "object"
+    properties:
+      sourceId:
+        type: "string"
+      destId:
+        type: "string"
+      date:
+        type: "string"
+        format: "date-time"
+      montant:
+        type: "number"
+        format: "float"
+    xml:
+      name: "Virement"
+    example:
+      sourceId: "sourceId"
+      date: "2000-01-23T04:56:07.000+00:00"
+      destId: "destId"
+      montant: 0.8008282
+  ApiResponse:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      type:
+        type: "string"
+      message:
+        type: "string"
