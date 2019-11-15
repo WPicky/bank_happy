@@ -17,3 +17,7 @@ open http://localhost:3000/docs
 ```
 
 This project leverages the mega-awesome [swagger-tools](https://github.com/apigee-127/swagger-tools) middleware which does most all the work.
+
+
+#### petit message 
+J'ai fait ce que j'ai pu dans le temps imparti, ayant quelques lacunes j'aurais peut être pu faire plus avec un peu plus de temps. Cela dit Swagger semble être un bon outil, mais difficile à prendre en main, ce qui m'a fait perdre du temps.
